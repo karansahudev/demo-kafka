@@ -2,7 +2,12 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs');
 
 async function main() {
-  const uri = 'mongodb://your-documentdb-endpoint:27017'; // Replace with your DocumentDB cluster endpoint
+  const username = encodeURIComponent('your-username'); // Replace with your username
+  const password = encodeURIComponent('your-password'); // Replace with your password
+  const clusterEndpoint = 'your-documentdb-endpoint:27017'; // Replace with your DocumentDB cluster endpoint
+
+  const uri = `mongodb://${username}:${password}@${clusterEndpoint}/?ssl=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false`;
+
   const sslCA = [fs.readFileSync('rds-combined-ca-bundle.pem')];
 
   const client = new MongoClient(uri, {
@@ -10,7 +15,6 @@ async function main() {
     useUnifiedTopology: true,
     sslValidate: true,
     sslCA: sslCA,
-    retryWrites: false,
   });
 
   try {
