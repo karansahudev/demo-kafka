@@ -1,12 +1,20 @@
 const { MongoClient } = require('mongodb');
+const fs = require('fs');
 
 async function main() {
-  const uri = 'mongodb://localhost:27017'; // Replace with your MongoDB server URI
+  const uri = 'mongodb://your-documentdb-endpoint:27017'; // Replace with your DocumentDB cluster endpoint
+  const sslCA = [fs.readFileSync('rds-combined-ca-bundle.pem')];
 
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    sslValidate: true,
+    sslCA: sslCA,
+    retryWrites: false,
+  });
 
   try {
-    // Connect to the MongoDB cluster
+    // Connect to the DocumentDB cluster
     await client.connect();
 
     // Specify the database and collection
