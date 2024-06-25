@@ -1,0 +1,20 @@
+ @Override
+    public void start(CoprocessorEnvironment env) throws IOException {
+        System.out.println("KafkaWALObserver started");
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "b-1.msk-cluster-id.amazonaws.com:9094,b-2.msk-cluster-id.amazonaws.com:9094");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        // Configure SSL
+        props.put("security.protocol", "SSL");
+        props.put("ssl.endpoint.identification.algorithm", "https");
+        props.put("ssl.truststore.location", "/path/to/your/truststore.jks");
+        props.put("ssl.truststore.password", "your-truststore-password");
+        props.put("ssl.keystore.location", "/path/to/your/keystore.jks");
+        props.put("ssl.keystore.password", "your-keystore-password");
+        props.put("ssl.key.password", "your-key-password");
+
+        producer = new KafkaProducer<>(props);
+        KafkaService.createKafkaTopic(topic, props);
+    }
