@@ -1,7 +1,7 @@
 Kafka Docker Cluserter Repo - https://github.com/provectus/kafka-ui/blob/master/documentation/compose/kafka-cluster-sr-auth.yaml
 dynamod vs hbase emr - https://docs.aws.amazon.com/whitepapers/latest/comparing-dynamodb-and-hbase-for-nosql/feature-summary.html
 
-
+Chart links : https://drive.google.com/file/d/1wGJ3eXt2zARNLXWvwnSHwE4KtOYia6PI/view?usp=sharing
 
 CLUSTER_ID=$(aws emr create-cluster --name "HBase Cluster with Coprocessor" \
   --release-label emr-6.5.0 \
