@@ -1,0 +1,36 @@
+kinesis
+
+#!/bin/bash
+
+# Get the initial shard iterator
+SHARD_ITERATOR=$(
+  aws kinesis get-shard-iterator \
+    --stream-name my-stream \
+    --shard-id shardId-000000000000 \
+    --shard-iterator-type TRIM_HORIZON \
+    --query 'ShardIterator' \
+    --output text \
+    --endpoint-url=http://localhost:4566
+)
+
+while [ "$SHARD_ITERATOR" != "null" ]; do
+  # Fetch records using the current shard iterator
+  RECORDS_JSON=$(aws kinesis get-records --shard-iterator $SHARD_ITERATOR --endpoint-url=http://localhost:4566)
+  
+  # Extract records and the next shard iterator from the response
+  RECORDS=$(echo $RECORDS_JSON | jq -r '.Records')
+  NEXT_SHARD_ITERATOR=$(echo $RECORDS_JSON | jq -r '.NextShardIterator')
+
+  # Loop through each record and decode the Base64 data
+  echo $RECORDS | jq -c '.[]' | while read record; do
+    DATA=$(echo $record | jq -r '.Data')
+    DECODED_DATA=$(echo $DATA | base64 --decode)
+    echo "Decoded Data: $DECODED_DATA"
+  done
+
+  # Use the next shard iterator for the subsequent request
+  SHARD_ITERATOR=$NEXT_SHARD_ITERATOR
+
+  # Optional: Add a delay to avoid excessive API calls
+  sleep 1
+done
